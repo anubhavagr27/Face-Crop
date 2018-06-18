@@ -1,0 +1,80 @@
+Jack wants to buy N fruits from the food market. 
+ (For the sake of the convenience, fruits will be denoted as numbers). 
+ So Jack needs baskets to put his fruits. 
+ Unfortunately, there are only two baskets left in the food market. 
+ Thus, Jack is carrying two baskets and picking up his fruits. He can put the fruits into the baskets as follows:
+ Putting them into basket 1. 
+ Putting them into basket 2.
+
+
+
+
+Putting them into none of the baskets.
+ The fruit price ranges from 1 to 1000 Won. There can be several fruits with the same price. However, they are considered as different fruits. Thus, there can be in total 3N number of possible situations.
+ 
+
+
+Now Jack wants to write a program that compares the fruits in the two baskets. The comparison works as follows: Write a program that finds 
+
+
+
+
+ the number of times when the fruit price values in basket 1 all XOR with one another (exclusive OR) and the fruit price values in basket 2 all XOR are the same.
+
+
+
+
+
+[Input]
+
+The first line contains T the number of total test cases.
+ The first line of each test case contains N (1≤N≤16).
+ On the next line, N space-separated number of fruit prices will be given. 
+ Each fruit price is greater than or equal to 1 and less than or equal to 1,000.
+
+
+
+
+[Output]
+
+For each test case, Print out answers for each of the test cases. Start each line with ‘#x’, leave a blank space, and print the number of times when the XOR values of fruit prices in basket 1 (exclusive OR) and all of the XOR values of fruit prices in basket 2 are the same.
+ Since the answer may get very big, print it modulo 1,000,000,007.
+
+
+
+
+[Sample Input/Output]
+
+
+
+Input Example
+ 
+Output Example
+ 
+
+1      // number of TestCases T = 1
+
+2      // N number of fruits N = 2
+
+3 3   // prices of N number of fruits
+ N1 = 3, N2 = 3
+ 
+#1 5     // answer to TestCase1
+ 
+
+
+
+
+ 
+Example) 
+ 1. Not Putting any fruit (1 case)
+ 2. Putting two fruits in the same basket (2 cases)
+
+
+
+
+3. Putting two fruits in different baskets (2 cases), in total 5 cases.
+
+ In case of number 2, there are fruits in either basket 1 or 2 with the prices N1, N2. 
+ In case of number 3 it is 011. If we perform XOR for both fruits, we get 000.
+ The values of both baskets are 0. Thus, in case of number 2, 2 is the answer. 
