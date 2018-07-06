@@ -1,0 +1,73 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed May 30 10:01:36 2018
+
+@author: anubhav.a
+"""
+
+import numpy as np
+import cv2 as cv
+import os
+import shutil
+
+## Enter the directory with haar cascade detector "haarcascade_frontalface_default.xml" is used here.
+path = "./"
+
+## Enter the path of image directory in rootdir variable
+rootdir = 'augmented'
+
+## Enter the name of new directory where cropped images have to be stored
+newdir = 'cropped'
+
+## Enter the cascade xml to be used here
+face_cascade = cv.CascadeClassifier('D:/SRC Algorithm/haarcascade_frontalface_default.xml')
+
+
+## Frame biases
+l = 0
+r = 0
+
+extensions = ['.jpg','.png']
+
+img = cv.imread('C:/Users/anubhav.a/Desktop/trump/trump2.jpg')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+faces = face_cascade.detectMultiScale(gray, 1.2, 5)
+print(faces[0][1])
+faces = sorted(faces, key=lambda a: a[2]*a[3], reverse=True)
+if len(faces) == 1:
+    x,y,w,h = faces[0][0],faces[0][1],faces[0][2],faces[0][3]
+    if w*h>400:
+        crop_img = img[y-l:y+h+l, x-r:x+w+r]
+                    #cv.imshow(crop_img)
+        cv.imwrite('C:/Users/anubhav.a/Desktop/trump/cropped/trump2.jpg', crop_img)
+    
+'''for subdir, dirs, files in os.walk(rootdir):
+    print("Now in directory: ",ctr, subdir)
+    ctr += 1
+    if not os.path.exists(os.path.join(newdir,subdir)):
+        os.mkdir(os.path.join(newdir,subdir))
+    for i,file in enumerate(files):
+        extension = file[file.rfind("."):]
+        #print(extension)
+        if extension in extensions:
+            #print os.path.join(subdir, file)
+            filepath = subdir + os.sep + file
+            newpath = newdir + os.sep + filepath
+
+            #print(newpath)
+
+            img = cv.imread(filepath)
+            #cv.imwrite(newpath,img)
+            gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+            faces = face_cascade.detectMultiScale(gray, 1.2, 5)
+            faces = sorted(faces, key=lambda a: a[2]*a[3], reverse=True)
+            #print("processing: ", file)
+            if len(faces) == 1:
+                x,y,w,h = faces[0][0],faces[0][1],faces[0][2],faces[0][3]
+                if w*h>400:
+                    crop_img = img[y-l:y+h+l, x-r:x+w+r]
+                    #cv.imshow(crop_img)
+                    cv.imwrite(newpath, crop_img)
+        else:
+            print( "not processed:", file)'''
+        
