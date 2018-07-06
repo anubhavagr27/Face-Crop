@@ -1,0 +1,229 @@
+Emotions are an important part of human’s life. Text is one of the medium to convey emotions. With the advancement of human computer interaction, recognizing emotion from human text emotion has shown its usefulness in many areas. This paper shows the emotion theories that provide the basis for emotion detection models. Here we propose a mix model consisting of sentiment analysis model plus word2vec skip-gram plus learning based RNN model. The combination of these model achieved a better accuracy then individual ones.
+
+
+
+As per dictionary meaning emotion is defined as a strong feeling from one’s circumstance, mood, or relationship with others. Wikipedia defines emotions as any conscious experience characterized by intense mental activity and a certain degree of pleasure or displeasure[1][2] . Categorizing emotion is another task. Ekman [3] classified emotion into six basic categories – Happy, Sadness, Anger, Surprise, Fear and Disgust. Plutchik [4] created a wheel of emotions. This wheel is used to illustrate different emotions in a compelling and nuanced way. Emotion detection from text is a tricky task. Emotion from text is inferred from the words or phrase in a sentence. For example happy emotion is inferred from the sentence-“I stood first in the class”. Whereas sad emotion is detected in-“I stood last in the class”. The words “first” and “last” are the determining words here. Sometimes sentence emotion can be ambiguous, like the sentence –“I am going to conquer the world”. This sentence can be positive for the speaker or others but for many this displays a negative emotion. These type of sentence are classified according to the data labels used in training.
+
+Emotion from text can have various applications. In this era of social media people convey their emotion publically through text media. These text can be classified and suggestions can be given accordingly. Stock market is often influenced by a people’s emotion and this can be used in stock market prediction. In the area of business development, emotion detection can help marketers to develop strategies for customer relationship management. Apart from these emoticons suggestion can be done in live chatting using this. Emotion research has recently attracted increased attention of the NLP community. Earlier emotion detection has also been done on Images and Sound.
+
+The rest of the paper is divided into following sections. Section II is related work and is further divided into emotion detection theories. Section III is about data and data preprocessing. Section IV is the proposed model architecture and details. Section V is Experimental Setup and Results. Section VI is Conclusion and Further Scope. Section VII is References.
+
+
+ RELATED WORK
+
+
+Emotion detection from text have recently attracted many NLP researchers. Alm et al. [5] have explored automatic classification of sentences in children's fairy tales according to the basic emotions identified by Ekman [3]. Liu et al. [6] have utilized real-world knowledge about affect drawn from a common-sense knowledge base. They aim to understand the semantics of text to identify emotions at the sentence level. They begin with extracting from the knowledge base those sentences that contain some affective information. Jianhua Tao [7] generates an emotion estimation net (ESiN), which combines the content words and emotion functional words to estimate the final output. Haji and Chen wu [8] proposed a hybrid based architecture for emotion detection using SVM. WordNet-Affect [9] is an affective extension of WordNet through selection and labelling of the synsets representing affective concepts. 
+
+Emotion Detection Models:
+1)	Keyword Based approach: In this approach the algorithm solely relies on the emotional words. The corpus contains words which are annotated with the emotions. This is a naïve approach and easy to implement. But this has various limitations, if a sentence does not contain any emotional word this fails to classify the sentence. And the test sentences needs hefty pre-processing.
+
+2)	N-gram TFIDF approach: Here the TFIDF vector for each sentence is calculated.TF (Term Frequency) is number of times a word appears in a document divided by the total number of words in the document. IDF (Inverse Document Frequency) is the logarithm of the number of documents in the corpus divided by the number of document where specific term appears. When N=1 the vector is of size of total unique words in the corpus. For N=2 a combination of 2 words is also added. The feature vectors are then send into a classifier model. The model did not give good accuracy for N=2 also the vector size is very large for greater N.
+
+3)	Learning based approach: In this approach words are mapped to integers and the sentence is converted into a word vector and then fed into a machine learning classifier for training. This approach works pretty well if supplied with a large training corpora. But this technique fails in recognizing emotion of negation sentences. 
+
+ DATA PREPROCESSING 
+
+
+For this paper we have used two datasets
+ISEAR dataset [10]: This data contains 7666 sentence manually annotated with 7 emotion label (joy, sadness, anger, guilt, shame, disgust, fear).
+
+Affect dataset [11]: This contains 179 short fairy tales and each sentence is annotated with emotion (joy, angry, sadness, fear, disgust, surprised).
+ 
+The text data contains lot of noise and needs to be preprocessed before feeding it into the model. The following steps are done as preprocessing:
+
+1)	Removing Punctuations: Punctuations such as comma, full stop, etc. have no relation with the emotional content of the sentences. Exclamation mark(!) and question mark(?) but sometime can infer some emotion. So except these all punctuations are removed from the corpus.
+
+2)	Expanding short words: Some words are written as shorter version of the actual like “had not” is written as “hadn’t”. Similarly chat words like “LOL, ROFL” can be expanded. A dictionary mapping is made for these kind of words.
+
+3)	 Tokenizing: The corpus is in form of strings, Each sentence is tokenized meaning chunks of words are collected and stored in an array or list. Here each word is called a token. E.g. “brown fox jumps” is tokenize into “[“brown”,”fox”,”jumps”]”.
+
+4)	Lemmatizing: It is sorting or grouping together inflected or variant forms of same words. E.g. “feel, feels, feeling” all are under “feel” group. All words are lemmatized in the corpus. This is done to reduce unique words and the emotional content remains the same.
+
+5)	Removing Stop Words: Some words does not contribute to emotions. Words like “is”,”it”,”an”,”a”,”the”,”he”,”she”,”it” etc. are removed from the corpus. Also whole corpus is converted into lower case for ease.
+
+
+
+Input Text 
+    Data
+
+
+								Prepared 
+								Text Data
+		           Pre-processing architecture
+
+
+PROPOSED ARCHITECTURE 
+
+A. Preparing Word2Vec word embedding
+
+In this approach we are not using pre-trained Word2Vec vectors. As the word vectors are not emotionally sematic, also the words in corpus may not be present in the pre-trained word vectors. Here we are using skip-gram [12] to train our corpus.
+
+The training data is arranged in a unique way for this.
+Each Sentence has an emotion label associated with it. We embed this word label into the sentence in interval of three. 
+Example if the sentence is: 
+
+“I feel good after topping the exam” with label “joy” 
+The prepared sentence is:
+“joy I feel good joy after topping the joy exam”
+ 
+As skip-gram model uses window of words as training. Meaning the corpus is trained and the words around a window of other words have similar word vectors. This ensure a semantic relation of a word in sentence with its label. 
+
+We need to tune the hyper parameters of the skip-gram. For this the data is divided into 5:1 ratio and can be consider as training and test data. The Word Vector is obtained from the training data. Then the cosine similarity of each sentence is compared with each emotion labels, the emotion which got maximum similarity will be assigned to that sentence. Accuracy on test data is then calculated and the parameter are tuned according to the accuracy (The accuracy got was between 40%-45% and therefore we cannot only use word vectors as a model.)
+
+B. Long Short Term Memory (LSTM) network
+
+Long short-term memory (LSTM)[13] units (or blocks) are a building unit for layers of a recurrent neural network (RNN). The word Vectors obtained from above is fed into the embedding layer as weights of the LSTM network. The next layer is the LSTM layer. This is a classification problem so many to one rnn architecture is used. The last layer is dense output layer with softmax activation. The model gives good results but the negation sentence was still wrong classified. The model is further combined with sentiment analyzer model.
+
+
+
+C. Sentiment Classifier
+
+Sentiment classification is pretty easy in compare to emotion classification. Here we only have 3 labels as positive, negative and neutral. And there is huge corpus available to train the model. Plenty of work has been done in this area. For this paper we are using NLTK VADER [14] sentiment analyzer. The analyzer predicts the sentiment of a sentence (positive, negative and neutral) with percentage of each sentiment. And our experiment show that it works well on negation sentences too.
+Emotions are sometime related to sentiments. Joy is often consider as positive sentiment. The difference of positive and negative score from the sentiment analyzer and the joy score from the learned model is combined to predict the emotion. This method seems to detect the negation sentence quite good.
+The model was able to distinguish sentences such as:
+“I am not happy”-‘sadness’ and “I am happy”-“joy”
+“I did not had much fun”-“guilt” and “I had much fun”-“joy”   etc.
+
+
+
+EXPERIMENT SETUP AND RESULTS
+
+A.  Experimental Setup
+
+For Word Vector extraction the dataset was trained on skip-gram model with a word vector of dimension 100(embedding dimension) with a window of 4 over 50 epochs. The LSTM network consists of embedding layer which have weight as word vectors obtained. The weight matrix is of dimension (No. of unique words X 100). The LSTM layer have 256 memory units and dropout of 0.8. For dense layer we have used activation function as Softmax with categorical entropy. The NLTK Vader sentiment analyzer scores were combined with the LSTM model scores from the output layer. The Vader score (difference of positive and negative percentage) was added to the score of “joy” if the Vader score is greater than some threshold (in our case we used a threshold of 0.2) 
+
+
+B.  Results
+
+Test on ISEAR dataset which have 7666 sentence manually annotated with 7 emotion label (joy, sadness, anger, guilt, shame, disgust, fear).
+
+Architecture	Pre-trained glove word vectors	Proposed Architecture	Proposed arch. with sentiment classifier
+Accuracy	60.1%	65.2%	66.02%
+
+The result show an increase in accuracy from the method proposed here.
+For testing purpose we test the data on mix data set of ISEAR and Affect. The dataset consists of 13,623 sentences with 8 labels as (joy, fear, sadness, anger, disgust, guilt, shame and surprised). The results are as:
+
+Architecture	Proposed Architecture	With Sentiment classifier
+Accuracy		56%	56.8%
+
+CONCLUSION AND FUTURE SCOPE
+
+In this paper we have demonstrated an architecture for emotion detection from text. We have presented a literature review of researches that has been done in this area. This paper addresses an important and less examined area of sentiment research on emotions, that is, emotion detection from text. The neural network and word2vec learns the word vectors according to the emotions. The proposed architecture has been validated with experimental results on two datasets. Emotion detection can serve its application in various fields such as stock market, business, marketing, social media, chatbots etc. In this paper we have consider only single label classification (meaning each sentence is consider to have one emotion only). This can be extended to multilabel classification as a sentence may have more than one emotion. As a future work we also have to use sentence vector instead of word vectors. This will require a larger corpus to train the sentences.
+
+
+REFERENCES
+
+[1] Cabanac, Michel (2002). "What is emotion?" Behavioural Processes 60(2): 69-83. "[E]motion is any mental experience with high intensity and high hedonic content (pleasure/displeasure)."
+
+[2] Scirst=Daniel L. (2011). Psychology Second Edition. 41 Madison Avenue, New York, NY 10010: Worth Publishers. p. 310. ISBN 978-1-4292-3719-2.
+
+[3] Ekman, P. (1992). Are there basic emotions? Psychological Review, 99(3), 550-553.
+
+[4] Plutchik, Robert (1980), Emotion: Theory, research, and experience: Vol. 1. Theories of emotion, 1, New York: Academic
+
+[5] Alm, C.O., Roth, D., Sproat, R.: Emotions from text: machine learning for text-based emotion prediction. In: Proc. of the Joint Conf. on Human Language
+Technology/Empirical Methods in Natural Language Processing (HLT/EMNLP), pp. 579–586 (2005)
+
+[6] Liu, H., Lieberman, H., Selker, T.: A Model of Textual Affect Sensing using Real-World Knowledge. In: Proc. of the Int’l Conf. on Intelligent User Interfaces (2003)
+
+[7] Context Based Emotion Detection from Text Input Jianhua Tao
+Institute of Automation, Chinese Academy of Sciences, Beijing, China
+
+[8] Computational Approaches for Emotion Detection inText Haji Binali, Chen Wu,Vidyasagar Potdar Digital Ecosystems Business Intelligence InstituteCurtin University of Technology Perth , Australia
+
+[9] WordNet-Affect: an Affective Extension of WordNet Carlo Strapparava and Alessandro Valitutti
+
+[10] http://www.affective-sciences.org/home/research/materials-and-online-research/research-material/
+
+[11] AFFECT IN TEXT AND SPEECH Ebba Cecilia Ovesdotter Alm, Ph.D.
+Department of Linguistics University of Illinois at Urbana-Champaign, 2008
+Professor Richard Sproat, Adviser
+
+[12] Distributed Representations of Words and Phrases and their Compositionality(Google)
+[13] LONG SHORT-TERM MEMORY Neural Computation 9(8):1735{1780,1997
+
+[14] VADER: A Parsimonious Rule-based Model for
+Sentiment Analysis of Social Media Text C.J. Hutto ,Eric Gilbert
+
+
+
+
+                                         
+In today’s fast growing world the mental and emotional state of people have become of utmost importance. But the question is do we get time to self-introspect ourselves. The method proposed here can automate our introspection. Smart phones are becoming a prior part of people’s life. Almost everyone carry one smart phone. And texting is a major function used in phones be it chatting or mailing. People give ample of time in chats. The system proposed will analyze the text data (from chats and other texts in phones) of a person in a day and calculate the percentage of various emotions expressed during the day by him/her. In this way a person at the end of the day can analyze his/her data.
+The rest of the paper is divided into following sections:
+-Uses and Application
+-Products
+-Technology Area
+-Description
+-Conclusion and Further Scope
+
+
+Uses And Application
+The application is used to introspect one’s own emotional state during the entire day. A person can see the results in the form of percentage of emotion conveyed by him/her during the day. In this way he/she can self-introspect their emotional state. Here the emotions are Joy, Sadness , Fear, Anger, Disgust, Shame, Guilt and Surprised. The system can also recommend songs and movie according the emotional condition of the person. A person can also inspect the results of his/her family members with the consent of the later. Parents can also use this to inspect their children. This is a brief application of this system it can be further extended into various application like Suicidal tendencies analysis, Chabot etc.
+
+The system can be integrated to mobile’s keyboard. The text typed in the keyboard will be stored in the phone itself and will not be accessed by any other party. The total texts collected will be then fed into the model to give the emotional analysis of the text document. 
+
+Technology Area
+
+    Previous Work
+Artificial Intelligence is a rapidly growing area .Here also the Emotions from texts are classified using Natural Language Processing Concept. Some paper have been published in this area i.e. Emotion detection from texts. Haji and Chen wu[1] proposed a hybrid based architecture for emotion detection using SVM.  Cecilia Alm[2] classify the emotion affinity of sentences of 22 fairly tales using naïve baseline and BOW(Bag of words) approach. Ekman [3] first described the basic six emotion( Anger, Disgust, Fear, Happiness, Sadness and Surprise). Apart from these the added emotions here are Guilt and Shame. Jianhua Tao[4] generates an emotion estimation net(ESiN), which combines the content words and emotion functional words to estimate the final output. WordNet-Affect[5] is an affective extension of WordNet through selection and labelling of the synsets representing affective concepts.
+
+  Proposed Approach:
+Learning based approach is being used in this paper. The training data consists 13,711 labelled sentences. Labels are the basic emotions i.e Joy, Sadness, Anger, Fear, Disgust, Guilt , Shame and Surprised. The sentences are first preprocessed. Preprocessing includes tokenization of sentences into tokens, then lemmatization of words, then removing certain stop-words.
+
+ 
+
+For getting the word vectors we trained the data in word2vec skip gram model. For training the data we prepare the sentence. The label of each sentence is embedded into the sentence in a window of 3 .For Example the if the sentence is:
+“ I feel amazing after topping the exam” with label “joy”
+The prepared sentence is:
+“ joy I feel amazing joy after topping the joy exam”
+These prepared sentence are then fed into the Word2Vec model to get word vectors(length 150-200) according to semantic relation.
+ There are two approaches described here:
+1)	Similarity Approach model:
+For a test Sentence we know the word Vectors of each of the words of the sentence. Then we compare the cosine similarities of these with each labeled emotion ,the emotion which give the maximum similarity with the test sentence will be the label of the test sentence. But this approach was naïve and the accuracy got after tuning the hyper parameters was not good. 
+
+2)	Learning Based Model(LSTM)
+In this the LSTM network is used to train the corpus with the embedding layers as the word vectors obtained from above. The LSTM model gave better results in comparison to CNN and MLP. 
+
+ Description  
+a)	Any text typed by the user will be stored internally in the mobile phone. At the end of the day a text doc will be generated which will be fed into the Emotion Detection model. Thus generating results in form percentage emotion.  
+
+b)Drawing
+                                                             
+                                            
+
+
+
+
+                                                                                                    
+							
+						                                  	
+                                                                                                                                             
+
+
+
+
+
+
+
+
+
+	
+
+Conclusion and further scope
+Human Computer interaction is becoming more and more prolong .This interaction can be further extended if machine understand human emotion and mood. This application was thought keeping in mind the importance of personal introspection, which till now can give the emotions of a person in a day.
+	Further this can be extended to chats bot for more real conversation with the bots. The experiment was done on English language only which can be further extended to different languages.
+
+References
+[1] Computational Approaches for Emotion Detection inText Haji Binali, Chen Wu,Vidyasagar Potdar Digital Ecosystems Business Intelligence InstituteCurtin University of Technology Perth , Australia
+[2] Emotions from text: machine learning for text-based emotion prediction Cecilia Ovesdotter Alm¤Dan Roth Richard Sproat
+[3] https://en.wikipedia.org/wiki/Paul_Ekman
+[4] Context Based Emotion Detection from Text Input Jianhua Tao
+Institute of Automation, Chinese Academy of Sciences, Beijing, China
+[5] WordNet-Affect: an Affective Extension of WordNet Carlo Strapparava and Alessandro Valitutti
+
+
+
+Name: Harsh Sinha
+Profile: Intern
+
